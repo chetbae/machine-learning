@@ -5,6 +5,8 @@ from random_dataset_gen import random_dataset_gen
 from random_linear_classifier import random_linear_classifier
 
 def plot(training_dataset, h):
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
     # plotting points
     pos = [[],[]]
     neg = [[],[]]
@@ -22,21 +24,22 @@ def plot(training_dataset, h):
     
     #
     x = np.linspace(-1,1,100)
-    y = -(1/h[0][0]) * x + h[0][1]
+    y = -(h[0][0]/h[0][1]) * x + h[0][1]
     plt.plot(x,y, 'b')
 
     #normal vector
-    plt.arrow(0,0, h[0][1], h[0][0])
+    plt.arrow(0,0, h[0][0], h[0][1])
 
     plt.grid(True)
     plt.xlim([-1,1])
     plt.ylim([-1,1])
     plt.axhline(0,color='black')
     plt.axvline(0,color='black')
+    ax.set_aspect('equal', adjustable='box')
     plt.show()
 
 def main():
-    D = random_dataset_gen(10, seed=69)
+    D = random_dataset_gen(20, seed=69)
     h = random_linear_classifier(D, 100)
     plot(D, h)
 
