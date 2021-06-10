@@ -511,8 +511,23 @@ def perceptron(data, labels, params = {}, hook = None):
 def averaged_perceptron(data, labels, params={}, hook=None):
     # if T not in params, default to 100
     T = params.get('T', 100)
+
     # Your implementation here
-    pass
+    (d, n) = data.shape
+    
+    theta = np.zeros((d, 1)); theta_0 = np.zeros((1,1))
+    thetas = np.zeros((d, 1)); theta_0s = np.zeros((1,1))
+    
+    for t in range(T):
+        for i in range(n):
+            x = data[:,i:i+1]
+            y = labels[:,i:i+1]
+            if y * positive(x, theta, theta_0) <= 0.0:
+                theta = theta + y * x
+                theta_0 = theta_0 + y
+            thetas = thetas + theta
+            theta_0s = theta_0s + theta_0
+    return thetas/(n*T), theta_0s/(n*T)
 
 # Visualization of Averaged Perceptron:
 '''
@@ -525,21 +540,44 @@ for datafn in (super_simple_separable, xor, xor_more, big_higher_dim_separable):
 #test_averaged_perceptron(averaged_perceptron)
 
 def eval_classifier(learner, data_train, labels_train, data_test, labels_test):
-    pass
+    th, th_0 = learner(data_train, labels_train)
+    z = score(data_test, labels_test, th, th_0)
+    return z/labels_test.size
+
 
 #Test cases:
 #test_eval_classifier(eval_classifier,perceptron)
 
 
 def eval_learning_alg(learner, data_gen, n_train, n_test, it):
-    pass
+    res = 0
+    for i in range(it):
+        data_train, labels_train = data_gen(n_train)
+        data_test, labels_test = data_gen(n_test)
+        res += eval_classifier(learner, data_train, labels_train, data_test, labels_test)
+    return res/it
 
 #Test cases:
 #test_eval_learning_alg(eval_learning_alg,perceptron)
 
 
 def xval_learning_alg(learner, data, labels, k):
-    pass
+    #cross validation of learning algorithm
+    data_i = np.array_split(data, k, axis=1)
+    labels_i = np.array_split(labels, k, axis=1)
+    res = 0
+    for i in range(k):
+        a,b = [],[]
+        for j in range(k):
+            if j != i:
+                a.append(data_i[j])
+                b.append(labels_i[j])
+        data_train = np.concatenate(a, axis=1)
+        labels_train = np.concatenate(b, axis=1)
+        data_test = data_i[i]
+        labels_test = labels_i[i]
+        res += eval_classifier(learner, data_train, labels_train, data_test, labels_test)
+    return res/k
 
 #Test cases:
 #test_xval_learning_alg(xval_learning_alg,perceptron)
