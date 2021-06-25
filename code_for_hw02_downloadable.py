@@ -505,7 +505,7 @@ def perceptron(data, labels, params = {}, hook = None):
 
 
 #Test Cases:
-#test_perceptron(perceptron)
+# test_perceptron(perceptron)
 
 
 def averaged_perceptron(data, labels, params={}, hook=None):
@@ -554,11 +554,12 @@ def eval_learning_alg(learner, data_gen, n_train, n_test, it):
     for i in range(it):
         data_train, labels_train = data_gen(n_train)
         data_test, labels_test = data_gen(n_test)
+        # data_test, labels_test = data_train, labels_train
         res += eval_classifier(learner, data_train, labels_train, data_test, labels_test)
     return res/it
 
 #Test cases:
-#test_eval_learning_alg(eval_learning_alg,perceptron)
+# test_eval_learning_alg(eval_learning_alg,perceptron)
 
 
 def xval_learning_alg(learner, data, labels, k):
@@ -585,4 +586,9 @@ def xval_learning_alg(learner, data, labels, k):
 
 #For problem 10, here is an example of how to use gen_flipped_lin_separable, in this case with a flip probability of 50%
 #print(eval_learning_alg(perceptron, gen_flipped_lin_separable(pflip=.5), 20, 20, 5))
+z = 0
+for i in range(10):
+    z += eval_learning_alg(perceptron, gen_flipped_lin_separable(pflip=.25), 20, 20, 5)
+print(z/10)
+
 
